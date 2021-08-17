@@ -15,7 +15,7 @@ public class GameController : MonoBehaviour
     public float minHitForce = 0.1f;
     public float maxHitForce = 5f;
     public IGameState gameState;
-    public InputHandler aimInputHandler;
+    public InputController inputController;
     public InputHandler hitSlider;
     private Vector3 cueBallStartPos;
     public Vector3 CueBallStartPos { get => cueBallStartPos; }

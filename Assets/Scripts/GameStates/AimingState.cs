@@ -31,7 +31,7 @@ class AimingState : GameStateAbstract
         hitSlider = gameController.hitSlider.GetComponent<Slider>();
         hitSlider.interactable = true;
 
-        gameController.aimInputHandler.OnDragAction += ChangeHitDirection;
+        gameController.inputController.OnDragAction += ChangeHitDirection;
         gameController.hitSlider.OnEndDragAction += HitSliderDragEnd;
     }
 
@@ -45,9 +45,9 @@ class AimingState : GameStateAbstract
         hitSlider.value = 0;
     }
 
-    private void ChangeHitDirection(PointerEventData eventData)
+    private void ChangeHitDirection(Vector2 touchPos)
     {
-        var pos = Camera.main.ScreenToWorldPoint(eventData.position);
+        var pos = Camera.main.ScreenToWorldPoint(touchPos);
         pos.y = cueBall.position.y;
         _hitDirection = (cueBall.position - pos).normalized;
         UpdateCueAndTrajectoryDir(_hitDirection);
@@ -88,7 +88,7 @@ class AimingState : GameStateAbstract
         }
         trajectory.SetVisible(false);
         cue.SetVisible(false);
-        gameController.aimInputHandler.OnDragAction -= ChangeHitDirection;
+        gameController.inputController.OnDragAction -= ChangeHitDirection;
         gameController.hitSlider.OnEndDragAction -= HitSliderDragEnd;
         gameController.gameState = new WaitingForNextTurnState(gameController);
     }
