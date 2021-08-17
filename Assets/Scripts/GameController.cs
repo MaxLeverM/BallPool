@@ -1,46 +1,40 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
     public Rigidbody CueBall;
+    public List<Rigidbody> balls;
     public Cue Cue;
-    private Vector3 _hitDirection;
+    public BallsTrajectory trajectory;
+    public float minHitForce = 0.1f;
+    public float maxHitForce = 5f;
+    public IGameState gameState;
+    public InputHandler aimInputHandler;
+    public InputHandler hitSlider;
+    private Vector3 cueBallStartPos;
+    public Vector3 CueBallStartPos { get => cueBallStartPos; }
+
     void Start()
     {
-
+        gameState = new AimingState(this);
+        cueBallStartPos = CueBall.position;
     }
-
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-       /* if (Input.touchCount > 0)
-        {
-            Touch touch = Input.GetTouch(0);
-            var pos = Camera.main.ScreenToWorldPoint(touch.position);
-            pos.z = CueBall.position.z;
-            var direction = pos - CueBall.position;
-        }*/
-       if(Input.GetMouseButton(0))
-        {
-            var pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            pos.y = CueBall.position.y;
-            _hitDirection = (pos - CueBall.position).normalized;
-            Cue.transform.LookAt(pos,Vector3.up);
-        }
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            CueHit(_hitDirection, 1f);
-        }
+        gameState.Update();
     }
-
-    public void CueHit(Vector3 direction, float force, Vector3 torque = default)
+    private void FixedUpdate()
     {
-        CueBall.AddForce(direction * force,ForceMode.Impulse);
-        if (torque != default)
-        {
-            CueBall.AddTorque(torque);
-        }
+        gameState.FixedUpdate();
+    }
+    private void LateUpdate()
+    {
+        gameState.LateUpdate();
     }
 }

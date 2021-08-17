@@ -1,29 +1,41 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BallLogic : MonoBehaviour
 {
-    private Rigidbody rig;
-    [SerializeField] private int _ballNumber = 0;
-    public int ballNumber { get => _ballNumber; }
+    [SerializeField] private string ballNumber;
     [SerializeField] private float sleepThreshold = 0.01f;
     [SerializeField] private float maxAngularVelocity = 25f;
+    public bool IsCueBall = false;
+    private Rigidbody rig;
+    public Rigidbody rigidb { get => rig; }
+    private Ball _ball;
+    public Ball ball { get => _ball; }
+    public Action<BallLogic> BallPocketedAction;
     void Start()
     {
         rig = GetComponent<Rigidbody>();
         rig.sleepThreshold = sleepThreshold;
         rig.maxAngularVelocity = maxAngularVelocity;
+        _ball = new Ball { Number = ballNumber };
     }
 
-   /* private Vector3 _velocity;
-    void FixedUpdate()
+    private void OnTriggerEnter(Collider other)
     {
-        if (rig.velocity.y > 0)
+        if (other.tag == "Pocket")
         {
-            _velocity = rig.velocity;
-            _velocity.y *= 0.3f;
-            rig.velocity = _velocity;
+            BallPocketedAction?.Invoke(this);
+            if (!IsCueBall)
+            {
+                Destroy(gameObject);
+            }
         }
-    }*/
+    }
+}
+
+public class Ball
+{
+    public string Number { get; set; }
 }
